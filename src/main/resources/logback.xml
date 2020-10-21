@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--文件资源的引用-->
+    <property resource="tool-man.properties"/>
+    <!-- 默认输出文件 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%p] [%t] [%c] [%M] [%L] -> %m%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 默认输出文件 -->
+    <appender name="DEFAULT-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/default/common-default.log.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 默认错误文件 -->
+    <appender name="ERROR-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/error/common-error.log.%d{yyyyMMdd}</fileNamePattern>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+    <!-- 性能日志文件 -->
+    <appender name="PERF-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/perf/common-perf.log.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 默认dao日志文件 -->
+    <appender name="DAO-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/dao/common-dao.log.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!-- service日志文件 -->
+    <appender name="SERVICE-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/service/common-service.log.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 业务日志文件 -->
+    <appender name="BUSINESS-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/business/common-business.log.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!-- WEB日志文件 -->
+    <appender name="WEB-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/web/common-web.log.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 报警日志 -->
+    <appender name="ALARM-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/alarm/common-alarm.log.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!--默认追踪日志-一般model或工具类日志用此  -->
+    <appender name="TRACE-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/trace/tracing.log.%d{yyyy-MM-dd-HH}.gz</fileNamePattern>
+            <maxHistory>72</maxHistory>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d - [%m]%n</pattern>
+        </encoder>
+    </appender>
+    <!-- ===================================================================== -->
+    <!-- Loggers                                                               -->
+    <!-- ===================================================================== -->
+    <logger name="com.myself.ssmTest.controller" additivity="false">
+        <level value="${log.root.level}"/>
+        <appender-ref ref="WEB-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    <logger name="com.myself.ssmTest.service" additivity="false">
+        <level value="${log.root.level}"/>
+        <appender-ref ref="SERVICE-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    <logger name="com.myself.ssmTest.dao" additivity="false">
+        <level value="${log.root.level}"/>
+        <appender-ref ref="DAO-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    <logger name="com.myself.ssmTest.model" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="TRACE-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    <logger name="businessLogger" additivity="false">
+        <level value="${log.root.level}"/>
+        <appender-ref ref="BUSINESS-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    <logger name="com.tuan.core.common.aop.pref.PerformanceMonitorInterceptor" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="PERF-APPENDER"/>
+    </logger>
+
+    <logger name="java.sql" additivity="false">
+        <level value="${log.root.level}"/>
+        <appender-ref ref="DAO-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    <logger name="alarmLogger" additivity="false">
+        <level value="${log.root.level}"/>
+        <appender-ref ref="ALARM-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    <!-- 屏蔽logger-start -->
+    <logger name="org.springframework" level="${log.root.level}"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.mybatis.spring" level="${log.root.level}"/>
+    <!-- 屏蔽jdk日志 -->
+    <logger name="java" level="WARN"/>
+    <logger name="com.mchange" additivity="false">
+        <level value="WARN"/>
+        <appender-ref ref="DAO-APPENDER"/>
+    </logger>
+    <!-- 屏蔽logger-end-->
+    <root level="${log.root.level}">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
