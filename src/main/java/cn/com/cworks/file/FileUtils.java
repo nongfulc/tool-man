@@ -79,24 +79,4 @@ public class FileUtils {
         return infoBuilder.toString();
     }
 
-    public static String getTextFromFile(String path, String encoding) {
-        StringBuilder text = new StringBuilder();
-        File file = new File(path);
-        if (!file.exists())
-            throw new RuntimeException(path + " does NOT exists!");
-
-        try (
-                InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);
-                BufferedReader reader = new BufferedReader(read);
-        ) {
-            String line;
-            while (null != (line = reader.readLine())) {
-                text.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text.toString();
-    }
-
 }
