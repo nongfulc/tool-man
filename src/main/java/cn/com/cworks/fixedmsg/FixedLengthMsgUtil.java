@@ -13,7 +13,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SuppressWarnings("all")
 public class FixedLengthMsgUtil {
 
     private static final String CONFIG_ROOT_PATH = "/paymsg/";
