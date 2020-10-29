@@ -27,15 +27,7 @@ public class ToolManTest {
 
     @Test
     public void test2() throws UnsupportedEncodingException {
-        LinkedHashMap config = FixedLengthMsgUtil.getConfig("/json/test.in.json");
-        System.out.println(config);
-
-        String in = "000031   lc28011234567890011234567890";
-        byte[] bytes = in.getBytes("GBK");
-
-
-        Map unPack = FixedLengthMsgUtil.unPack(bytes, "GBK", config);
-        System.out.println(unPack);
+//
 
 
     }

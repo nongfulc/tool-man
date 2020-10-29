@@ -1,30 +1,76 @@
 package cn.com.cworks.fixedmsg;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.*;
-import java.util.*;
-
+@SuppressWarnings("all")
 public class FixedLengthMsgUtil {
-    private static final String CONFIG_ROOT_PATH = "/json/";
-    private static final String OUT_CONFIG_PATH_SUFFIX = ".out.json";
-    private static final String IN_CONFIG_PATH_SUFFIX = ".in.json";
 
+    private static final String CONFIG_ROOT_PATH = "/paymsg/";
+    private static final String IN_CONFIG_PATH_SUFFIX = ".response.json";
+    private static final String OUT_CONFIG_PATH_SUFFIX = ".request.json";
 
-    public static Map unPack(byte[] bytes, String charsetName, LinkedHashMap<String, Object> configMap) {
+    /**
+     * 获取发送的报文的字符数组
+     *
+     * @param dataMap     包含所有发送信息的map
+     * @param charsetName 发送信息的编码
+     * @return 返回发送的字符串
+     */
+    public static byte[] pack(Map dataMap, String charsetName) {
+        LinkedHashMap configMap = getConfig(
+                CONFIG_ROOT_PATH + dataMap.get("HostTransactionCode") + OUT_CONFIG_PATH_SUFFIX);
+        StringBuilder msg = new StringBuilder();
+        configMap.forEach((key, length) -> {
+            String sendValue = String.valueOf(dataMap.get(key));
+            if (null == sendValue) {
+                sendValue = "";
+            }
+            msg.append(autoFill(sendValue, (Integer) length, charsetName));
+        });
+        String length = getHeadLength(msg, charsetName);
+        msg.insert(0, length);
+        try {
+            return msg.toString().getBytes(charsetName);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("不支持的编码格式");
+        }
+    }
+
+    /**
+     * 将返回的字符串组封装成map
+     *
+     * @param bytes       获取到的报文字符数组
+     * @param charsetName 字符串编码
+     * @param length      返回报文的报文体长度（含报文头长度）
+     * @param map         存储请求数据的map
+     * @return 返回封装结果后的map
+     */
+    public static Map unPack(byte[] bytes, String charsetName, int length, Map map) {
+        LinkedHashMap<String, Object> configMap = getConfig(
+                CONFIG_ROOT_PATH + map.get("HostTransactionCode") + IN_CONFIG_PATH_SUFFIX);
         Map<String, Object> dataMap = new HashMap<>();
-        int length = Integer.parseInt(new String(bytes, 0, 6));
-        final int[] index = {6};
+        final int[] index = {0};
         configMap.forEach((key, value) -> {
             try {
                 if ("List".equals(key)) {
                     LinkedHashMap<String, Integer> listConfig = (LinkedHashMap) value;
-                    int listLength = length - index[0] + 6;
+                    int listLength = length - 6 - index[0];
                     int configLength = getLength(listConfig);
                     if (listLength % configLength != 0) {
                         throw new RuntimeException("报文好像有问题");
                     }
-                    List list = new ArrayList();
+                    List list = new ArrayList<>();
                     for (int i = 0; i < listLength / configLength; i++) {
                         Map temp = new HashMap();
                         listConfig.forEach((childKey, childValue) -> {
@@ -51,6 +97,12 @@ public class FixedLengthMsgUtil {
 
     }
 
+    /**
+     * 获取configMap内配置的字段长度之和
+     *
+     * @param configMap 配置map
+     * @return configMap内配置的字段长度之和
+     */
     private static int getLength(LinkedHashMap<String, Integer> configMap) {
         final int[] i = {0};
         configMap.forEach((key, value) -> {
@@ -60,42 +112,20 @@ public class FixedLengthMsgUtil {
     }
 
     /**
-     * 获取发送的报文
-     *
-     * @param dataMap     包含所有发送信息的map
-     * @param charsetName 发送信息的编码
-     * @return 返回发送的字符串
-     */
-    public static byte[] pack(Map dataMap, String charsetName) {
-        LinkedHashMap configMap = getConfig(CONFIG_ROOT_PATH + dataMap.get("TransCode") + OUT_CONFIG_PATH_SUFFIX);
-        StringBuilder msg = new StringBuilder();
-        configMap.forEach((key, length) -> {
-            String sendValue = String.valueOf(dataMap.get(key));
-            if (null == sendValue) {
-                sendValue = "";
-            }
-            msg.append(autoFill(sendValue, (Integer) length));
-        });
-        String length = getHeadLength(msg, charsetName);
-        msg.insert(0, length);
-        try {
-            return msg.toString().getBytes(charsetName);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("不支持的编码格式");
-        }
-    }
-
-    /**
      * 根据长度在左侧填充空格
      *
      * @param value  要填充的字符串
      * @param length 配置的长度
      * @return 填充后的值
      */
-    private static String autoFill(String value, int length) {
+    private static String autoFill(String value, int length, String charsetName) {
         StringBuilder s = new StringBuilder();
-        for (int i = 0; i < length - value.length(); i++) {
-            s.append(" ");
+        try {
+            for (int i = 0; i < length - value.getBytes(charsetName).length; i++) {
+                s.append(" ");
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         s.append(value);
         return s.toString();
@@ -111,7 +141,7 @@ public class FixedLengthMsgUtil {
     private static String getHeadLength(StringBuilder s, String charsetName) {
         StringBuilder head = new StringBuilder();
         try {
-            int sLen = s.toString().getBytes(charsetName).length;
+            int sLen = s.toString().getBytes(charsetName).length + 4;
             int length = String.valueOf(sLen).length();
             if (length < 4) {
                 for (int i = 0; i < 4 - length; i++) {
@@ -126,17 +156,15 @@ public class FixedLengthMsgUtil {
     }
 
     /**
-     * 从resource下读取配置文件内的json字符串，转成LinkedHashMap
+     * 根据路径获取配置内容
      *
-     * @param path resource下的路径，以"/"开头
-     * @return 返回读取到配置信息的LinkedHashMap
+     * @param path 配置文件路径
+     * @return 返回配置信息map
      */
-    public static LinkedHashMap getConfig(String path) {
+    private static LinkedHashMap getConfig(String path) {
         StringBuilder json = new StringBuilder();
-        try (
-                InputStream in = FixedLengthMsgUtil.class.getResourceAsStream(path);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        ) {
+        try (InputStream in = FixedLengthMsgUtil.class.getResourceAsStream(path);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in));) {
 
             String line;
             while (null != (line = reader.readLine())) {
@@ -148,4 +176,5 @@ public class FixedLengthMsgUtil {
         }
         return null;
     }
+
 }
