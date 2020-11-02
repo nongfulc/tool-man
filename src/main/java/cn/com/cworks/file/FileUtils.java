@@ -52,13 +52,12 @@ public class FileUtils {
         StringBuilder infoBuilder = new StringBuilder();
         File file = new File(filePath);
         if (!file.exists()) {
-            logger.debug("dose NOT exists!");
             throw new RuntimeException(filePath + " does not exists!");
         }
         try (
                 FileInputStream in = new FileInputStream(file);
                 InputStreamReader reader = new InputStreamReader(in, charsetName);
-                BufferedReader bufferedReader = new BufferedReader(reader);
+                BufferedReader bufferedReader = new BufferedReader(reader)
         ) {
             String line;
             int i = 0;
@@ -77,6 +76,30 @@ public class FileUtils {
             e.printStackTrace();
         }
         return infoBuilder.toString();
+    }
+
+    /**
+     * 将内容写到文件内
+     *
+     * @param text 要写入的内容
+     * @param path 要写入的文件
+     */
+    public static void writeStr(String text, String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try (
+                FileWriter writer = new FileWriter(path, false);
+                BufferedWriter bWriter = new BufferedWriter(writer)) {
+            bWriter.write(text);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

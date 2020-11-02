@@ -17,7 +17,7 @@ public class MD5Util {
      */
     public static String md5Encode(String msg, String charsetName) {
         try {
-            return md5Encode((msg + MD5_SALT).getBytes(charsetName));
+            return md5Encode((MD5_SALT + msg).getBytes(charsetName));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("不支持的编码格式！");
         }
@@ -38,12 +38,5 @@ public class MD5Util {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("No such Algorithm.");
         }
-    }
-
-    public static void main(String[] args) {
-        String s = md5Encode("hehe", "UTF-8");
-        System.out.println(s);
-        System.out.println(Base64Util.encryptBASE64(s, "UTF-8"));
-
     }
 }
