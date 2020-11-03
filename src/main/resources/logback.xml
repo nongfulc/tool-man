@@ -2,7 +2,7 @@
 <configuration>
     <!--文件资源的引用-->
     <property resource="tool-man.properties"/>
-    <!-- 默认输出文件 -->
+    <!-- 控制台输出格式 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder charset="UTF-8">
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%p] [%t] [%c] [%M] [%L] -> %m%n</pattern>
@@ -30,56 +30,6 @@
             <level>ERROR</level>
         </filter>
     </appender>
-    <!-- 性能日志文件 -->
-    <appender name="PERF-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/perf/common-perf.log.%d{yyyyMMdd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder charset="UTF-8">
-            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
-        </encoder>
-    </appender>
-    <!-- 默认dao日志文件 -->
-    <appender name="DAO-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/dao/common-dao.log.%d{yyyyMMdd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder charset="UTF-8">
-            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
-        </encoder>
-    </appender>
-    <!-- service日志文件 -->
-    <appender name="SERVICE-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/service/common-service.log.%d{yyyyMMdd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder charset="UTF-8">
-            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
-        </encoder>
-    </appender>
-    <!-- 业务日志文件 -->
-    <appender name="BUSINESS-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/business/common-business.log.%d{yyyyMMdd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder charset="UTF-8">
-            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
-        </encoder>
-    </appender>
-    <!-- WEB日志文件 -->
-    <appender name="WEB-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/web/common-web.log.%d{yyyyMMdd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder charset="UTF-8">
-            <pattern>%d [%t] %-5p %c{2} [%X{traceRootId}] - [%m]%n</pattern>
-        </encoder>
-    </appender>
     <!-- 报警日志 -->
     <appender name="ALARM-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -103,45 +53,35 @@
     <!-- ===================================================================== -->
     <!-- Loggers                                                               -->
     <!-- ===================================================================== -->
-    <logger name="com.myself.ssmTest.controller" additivity="false">
+    <logger name="controller" additivity="false">
         <level value="${log.root.level}"/>
-        <appender-ref ref="WEB-APPENDER"/>
+        <appender-ref ref="DEFAULT-APPENDER"/>
         <appender-ref ref="ERROR-APPENDER"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.myself.ssmTest.service" additivity="false">
+    <logger name="service" additivity="false">
         <level value="${log.root.level}"/>
-        <appender-ref ref="SERVICE-APPENDER"/>
+        <appender-ref ref="DEFAULT-APPENDER"/>
         <appender-ref ref="ERROR-APPENDER"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.myself.ssmTest.dao" additivity="false">
+    <logger name="dao" additivity="false">
         <level value="${log.root.level}"/>
-        <appender-ref ref="DAO-APPENDER"/>
+        <appender-ref ref="DEFAULT-APPENDER"/>
         <appender-ref ref="ERROR-APPENDER"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.myself.ssmTest.model" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="TRACE-APPENDER"/>
-        <appender-ref ref="ERROR-APPENDER"/>
-    </logger>
-    <logger name="businessLogger" additivity="false">
-        <level value="${log.root.level}"/>
-        <appender-ref ref="BUSINESS-APPENDER"/>
-        <appender-ref ref="ERROR-APPENDER"/>
-    </logger>
-    <logger name="com.tuan.core.common.aop.pref.PerformanceMonitorInterceptor" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="PERF-APPENDER"/>
-    </logger>
-
     <logger name="java.sql" additivity="false">
         <level value="${log.root.level}"/>
-        <appender-ref ref="DAO-APPENDER"/>
+        <appender-ref ref="DEFAULT-APPENDER"/>
         <appender-ref ref="ERROR-APPENDER"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="alarmLogger" additivity="false">
         <level value="${log.root.level}"/>
-        <appender-ref ref="ALARM-APPENDER"/>
+        <appender-ref ref="DEFAULT-APPENDER"/>
         <appender-ref ref="ERROR-APPENDER"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
     <!-- 屏蔽logger-start -->
     <logger name="org.springframework" level="${log.root.level}"/>
@@ -149,10 +89,6 @@
     <logger name="org.mybatis.spring" level="${log.root.level}"/>
     <!-- 屏蔽jdk日志 -->
     <logger name="java" level="WARN"/>
-    <logger name="com.mchange" additivity="false">
-        <level value="WARN"/>
-        <appender-ref ref="DAO-APPENDER"/>
-    </logger>
     <!-- 屏蔽logger-end-->
     <root level="${log.root.level}">
         <appender-ref ref="CONSOLE"/>
