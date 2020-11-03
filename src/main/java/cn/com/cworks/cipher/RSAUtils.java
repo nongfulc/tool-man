@@ -51,6 +51,13 @@ public class RSAUtils {
         return keyMap;
     }
 
+    /**
+     * 分段，使用公钥加密数据
+     *
+     * @param publicKey 公钥的Base64字符串
+     * @param data      要加密的字符串
+     * @return 加密后的Base64编码的字符串
+     */
     public static String encodeWithPublicKey(String publicKey, String data) {
         try {
             X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey));
@@ -87,6 +94,13 @@ public class RSAUtils {
         }
     }
 
+    /**
+     * 分段，使用私钥对加密数据进行解密
+     *
+     * @param privateKey 私钥Base64字符串
+     * @param data       要解密的Base64字符串
+     * @return 返回解密后的字符串
+     */
     public static String decryptWithPrivateKey(String privateKey, String data) {
         try {
             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey));
