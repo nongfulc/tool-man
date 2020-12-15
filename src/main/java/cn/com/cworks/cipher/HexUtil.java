@@ -1,10 +1,56 @@
 package cn.com.cworks.cipher;
 
 
+import java.io.UnsupportedEncodingException;
+
+/**
+ * 提供16进制字符串的转换工具
+ */
 public class HexUtil {
 
     private static final char[] DIGITS_LOWER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     private static final char[] DIGITS_UPPER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
+
+    /**
+     * 将16进制字符串转换为字节数组
+     *
+     * @param hexStr 需要转换的16进制字符串
+     * @return 转换后的字节数组
+     */
+    public static byte[] decodeHexStrToBytes(String hexStr) {
+        char[] hexArray = hexStr.toCharArray();
+        int len = hexArray.length;
+        if ((len & 1) != 0) {
+            throw new RuntimeException("字符数组长度不是偶数");
+        }
+        byte[] result = new byte[len >> 1];
+        int i = 0;
+        for (int j = 0; j < len; ++i) {
+            int x = toDigit(hexArray[j], j) << 4;
+            ++j;
+            x |= toDigit(hexArray[j], j);
+            ++j;
+            result[i] = (byte) (x & 255);
+        }
+        return result;
+    }
+
+    /**
+     * 将字符转换为对应的10进制整数
+     *
+     * @param ch    待转换的字符
+     * @param index 字符在16进制字符串中的位置
+     * @return 转换后的10进制整数
+     */
+    private static int toDigit(char ch, int index) {
+        int digit = Character.digit(ch, 16);
+        if (digit == -1) {
+            throw new RuntimeException("Illegal hexadecimal character " + ch + " at index " + index);
+        } else {
+            return digit;
+        }
+    }
 
 
     /**

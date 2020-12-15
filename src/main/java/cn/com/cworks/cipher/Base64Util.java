@@ -8,7 +8,7 @@ import java.util.Base64;
 public class Base64Util {
 
     /**
-     * 使用基本解码方式对base64字符串进行解码
+     * 使用基本解码方式对base64字符串进行解码，UTF-8
      *
      * @param base64 要解码的base64字符串
      * @return 解码后的字符串
@@ -38,7 +38,7 @@ public class Base64Util {
     }
 
     /**
-     * Base64 编码指定字符串，基本编码方式
+     * Base64 编码，UTF-8
      *
      * @param msg 要编码的字符串
      * @return 返回编码后的字符串
