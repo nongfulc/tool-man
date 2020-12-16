@@ -1,28 +1,43 @@
 package cn.com.cworks.excel;
 
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class ExcelUtil {
 
     public static List<Map<String, Object>> readExcel(String path) {
-        try (FileInputStream input = new FileInputStream(path)){
-            Workbook book = null;
-            if (path.toLowerCase(Locale.ROOT).endsWith("xlsx")){
-                book = new XSSFWorkbook(input);
-            }else if (path.toLowerCase(Locale.ROOT).endsWith("xlsx")){
-
+        List<Map<String, Object>> result = new ArrayList<>();
+        try {
+            DataFormatter formatter = new DataFormatter();
+            Workbook sheets = WorkbookFactory.create(new File(path));
+            for (Sheet sheet : sheets) {
+                for (Row row : sheet) {
+                    Map<String, Object> temp = new HashMap<>();
+                    for (Cell cell : row) {
+                        temp.put(String.valueOf(cell.getColumnIndex()), formatter.formatCellValue(cell));
+                    }
+                    result.add(temp);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
+
+    public static void writeExcel(String path) {
+
+    }
+
+    public static void main(String[] args) {
+    }
+
+
 }

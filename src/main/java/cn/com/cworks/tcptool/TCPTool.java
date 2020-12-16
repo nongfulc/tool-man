@@ -1,4 +1,4 @@
-package cn.com.cworks;
+package cn.com.cworks.tcptool;
 
 import java.io.*;
 import java.net.Socket;
