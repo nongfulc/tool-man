@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -94,7 +93,7 @@ public class FileUtils {
             }
         }
         try (
-                FileWriter writer = new FileWriter(path, false);
+                FileWriter writer = new FileWriter(path, true);
                 BufferedWriter bWriter = new BufferedWriter(writer)) {
             bWriter.write(text);
         } catch (IOException e) {
