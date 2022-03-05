@@ -1,8 +1,5 @@
 package cn.com.cworks.cipher;
 
-
-import java.io.UnsupportedEncodingException;
-
 /**
  * 提供16进制字符串的转换工具
  */
@@ -54,7 +51,7 @@ public class HexUtil {
 
 
     /**
-     * 将字节数组转换成16字符串，可选择大小写
+     * 将字节数组转换成16进制字符串，可选择大小写
      *
      * @param src         需要转换的字节数组
      * @param toLowerCase 是否小写
